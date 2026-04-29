@@ -1,6 +1,7 @@
 # 配方数据抽取逻辑
 
-![这是抽取的schema](/Users/tthu/Desktop/高分子/dataextracion/figue/image.png)
+这是抽取的schema
+![alt text](figue/image.png)
 
 > 基于 `prompts.py,pla_extract.py` 文件的抽取流程梳理
 

@@ -1,6 +1,6 @@
 # 文献解析与数据提取逻辑
 
-> 基于 `convert_msf.py` 和 `0120_get_doi_detail_electrolyte.ipynb` 文件的两种文献解析流程梳理
+> 基于 `mineru_pdf_parser.py` 和 `0120_get_doi_detail_electrolyte.ipynb` 文件的两种文献解析流程梳理
 
 ---
 
@@ -91,26 +91,38 @@ TS = (
 
 无论来源和最初的加工技术路径如何，文献数据在清洗阶段的终点都将被封装为统一的基于 Python Dictionary 并导出的 JSON 数据对象 `ArticleInformation`。这将作为上下文核心交付给最终的大模型，执行配方的结构化提纯。
 
-| 字段名 | 类型 | 说明 | 数据组装特色与来源差异化 |
-|--------|------|------|--------------------|
-| `doi` | string | 文献唯一标识符 | 自有或爬取清单引入，系统唯一主键 |
-| `title` | string | 论文标题 | 统一由 Crossref 取出并打碎内部 HTML tag |
-| `journalName` | string | 期刊名称缩写/全称 | Crossref `container-title` 阵列映射 |
-| `authors` | string[] | 作者列表 | Crossref Author 字段中 `Given` 与 `Family` 的规范拼接体 |
-| `pubDate` | string | 发表日期 | Crossref 溯源发布时间数组整合，统一形式 "YYYY-MM-DD" |
-| `citations` | number | 过往被引总量 | 反映基准影响力的 Crossref `is-referenced-by-count` |
-| `abstract` | string | 摘要 | Crossref 元提取或 HTML 源码提取互相补充托底 |
-| `paragraphs` | string[] | **正文核心段落数组** | HTML：极致纯净的纯干货段落；<br>PDF：经重度正则脱水甚至拼写修正的大段文本 |
-| `figureCaptions` | string[] | 图注长文本集合 | PDF：空；**HTML：完整囊括原文所有插图及其子插图详注** |
-| `schemeCaptions` | string[] | 方案图注文集合 | PDF：空；HTML：化学/体系等原理论述图解标注集合 |
-| `tables` | mixed array | 表格结构体描述内容 | PDF：含 Markdown 边界表的字串直接透传；<br>HTML：精分出 `{"title":..., "footer":...}` 的结构对象 |
+| 字段名 | 类型 | 说明 |
+|--------|------|------|
+| `doi` | string | 文献唯一标识符 |
+| `title` | string | 论文标题 |
+| `journalName` | string | 期刊名称缩写/全称 |
+| `authors` | string[] | 作者列表 |
+| `pubDate` | string | 发表日期 |
+| `citations` | number | 过往被引总量 |
+| `abstract` | string | 摘要 |
+| `paragraphs` | string[] | **正文核心段落数组** |
+| `figureCaptions` | string[] | 图注长文本集合 |
+| `schemeCaptions` | string[] | 方案图注文集合 |
+| `tables` | mixed array | 表格结构体描述内容 |
 
 ---
-**核心设计结论**
-系统拥有两个坚实的“基底”架构：
-- **PDF 解析链路** 是针对缺乏网页版长尾文献与上古文献提供的“高泛化度”暴力收割方案；主要处理不可避的 OCR 及排印混杂错断难题。
-- **HTML 解析链路** 是针对主流现代学术平台的“降维降噪”直解方案；其提取效率绝佳并保证信息的原子级干净与归属分离。
-最终，二者在出口实现强制合并接口对开，让大模型只应对标准化规范，这实现了“配方提取器”对于不同文件模态下信息的鲁棒性提取分析支撑。
 
 ---
-*文档生成时间: 2026-04-28*
+基本信息：
+3D打印领域文献（3484，20260120）：https://www.webofscience.com/wos/alldb/summary/5f2c0bf0-1e6d-4fcb-b084-152831da1024-0198116ee6/relevance/1
+Minio bucket: electrolyte-brain
+
+访问方式：
+下载这一链接中的ipynb脚本后使用colab打开：
+https://git.xmu.edu.cn/ChenWeifeng/paper-crawler/-/blob/main/electrolyte-brain-doi-0120/0120_get_doi_detail_electrolyte.ipynb
+设置colab的secret项：
+GITLAB_TOKEN: glpat-yB6zhpJu1bCKftYKO76yim86MQp1OjF3bQk.01.0z1vypxf2
+
+AKA: nUr1BhhXwDBH282sluDv
+
+SK: yttWzyGi3xxFEyhV4otL7flKynqqMM5TLiKmgeHQ
+
+进度：
+目前已爬取（2576/3484）
+- 存在273个缺失doi的结果
+- 剩余文献未提供网页版，或没有访问权限
