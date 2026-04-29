@@ -1,0 +1,15 @@
+# Cache and System files
+__pycache__/
+*.pyc
+.DS_Store
+.ipynb_checkpoints/
+
+# Data files (these are too large for GitHub > 100MB or are just raw data caches)
+*.json
+!press-config.json
+crossref_cache/
+
+.env
+
+articleParsing_extraction_save.ipynb
+cat_extract_v2_quickSwitch.ipynb
